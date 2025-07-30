@@ -1,0 +1,198 @@
+@model SOAP.Web.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Login to SOAP
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Login" method="post" id="login-form">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">
+                            <i class="fas fa-phone me-1"></i>
+                            Phone Number
+                        </label>
+                        <input asp-for="PhoneNumber" class="form-control phone-input" placeholder="0722123456 or 254722123456" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="form-text">Enter your registered phone number</div>
+                    </div>
+                    
+                    <div class="mb-3" id="otp-section" style="display: none;">
+                        <label asp-for="OtpCode" class="form-label">
+                            <i class="fas fa-key me-1"></i>
+                            Verification Code
+                        </label>
+                        <input asp-for="OtpCode" class="form-control" placeholder="Enter 6-digit code" maxlength="6" />
+                        <span asp-validation-for="OtpCode" class="text-danger"></span>
+                        <div class="form-text">
+                            Enter the verification code sent to your phone
+                            <a href="#" id="resend-otp" class="text-primary ms-2" style="display: none;">Resend Code</a>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="send-otp-btn">
+                            <i class="fas fa-paper-plane me-2"></i>
+                            Send Verification Code
+                        </button>
+                        <button type="submit" class="btn btn-success" id="login-btn" style="display: none;">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            Login
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">Don't have an account?</p>
+                    <a asp-action="Register" class="btn btn-outline-primary">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Register as Parent
+                    </a>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Need help? Contact your school administration
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let otpSent = false;
+            
+            $('#send-otp-btn').on('click', function() {
+                const phoneNumber = $('#PhoneNumber').val().trim();
+                
+                if (!phoneNumber) {
+                    alert('Please enter your phone number');
+                    return;
+                }
+                
+                if (!isValidPhoneNumber(phoneNumber)) {
+                    alert('Please enter a valid phone number');
+                    return;
+                }
+                
+                sendOtp(phoneNumber);
+            });
+            
+            $('#resend-otp').on('click', function(e) {
+                e.preventDefault();
+                const phoneNumber = $('#PhoneNumber').val().trim();
+                sendOtp(phoneNumber);
+            });
+            
+            function sendOtp(phoneNumber) {
+                showLoading('#send-otp-btn');
+                
+                $.ajax({
+                    url: '/api/send-otp',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(phoneNumber),
+                    success: function(response) {
+                        hideLoading('#send-otp-btn');
+                        
+                        if (response.sent) {
+                            $('#otp-section').show();
+                            $('#send-otp-btn').hide();
+                            $('#login-btn').show();
+                            $('#resend-otp').show();
+                            $('#OtpCode').focus();
+                            otpSent = true;
+                            
+                            // Start countdown for resend
+                            startResendCountdown();
+                        } else {
+                            alert('Error sending verification code. Please try again.');
+                        }
+                    },
+                    error: function() {
+                        hideLoading('#send-otp-btn');
+                        alert('Error sending verification code. Please try again.');
+                    }
+                });
+            }
+            
+            function startResendCountdown() {
+                let countdown = 60;
+                const resendBtn = $('#resend-otp');
+                
+                const timer = setInterval(function() {
+                    resendBtn.text(`Resend Code (${countdown}s)`);
+                    countdown--;
+                    
+                    if (countdown < 0) {
+                        clearInterval(timer);
+                        resendBtn.text('Resend Code');
+                    }
+                }, 1000);
+            }
+            
+            function isValidPhoneNumber(phone) {
+                const cleaned = phone.replace(/\s/g, '');
+                return /^(0\d{9}|254\d{9})$/.test(cleaned);
+            }
+            
+            function showLoading(selector) {
+                const btn = $(selector);
+                btn.prop('disabled', true);
+                btn.html('<span class="spinner-border spinner-border-sm me-2"></span>Sending...');
+            }
+            
+            function hideLoading(selector) {
+                const btn = $(selector);
+                btn.prop('disabled', false);
+                btn.html('<i class="fas fa-paper-plane me-2"></i>Send Verification Code');
+            }
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+    
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    
+    .btn {
+        border-radius: 8px;
+        padding: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .phone-input {
+        font-family: 'Courier New', monospace;
+    }
+</style>

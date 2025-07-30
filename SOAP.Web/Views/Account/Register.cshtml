@@ -1,0 +1,231 @@
+@model SOAP.Web.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Register for SOAP
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Parent Registration:</strong> Register to manage your child's school admission process online.
+                </div>
+                
+                <form asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">
+                            <i class="fas fa-phone me-1"></i>
+                            Phone Number *
+                        </label>
+                        <input asp-for="PhoneNumber" class="form-control phone-input" placeholder="0722123456" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <div class="form-text">This will be used for SMS notifications and login</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">
+                            <i class="fas fa-user me-1"></i>
+                            Full Name *
+                        </label>
+                        <input asp-for="FullName" class="form-control" placeholder="Enter your full name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label">
+                            <i class="fas fa-user-tag me-1"></i>
+                            Role
+                        </label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="Parent">Parent/Guardian</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a> 
+                                and <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Register Account
+                        </button>
+                    </div>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-2">Already have an account?</p>
+                    <a asp-action="Login" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Login Here
+                    </a>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Your information is secure and will only be used for admission purposes
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terms Modal -->
+<div class="modal fade" id="termsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms and Conditions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>1. Acceptance of Terms</h6>
+                <p>By using SOAP (Smart Online Admission Portal), you agree to these terms and conditions.</p>
+                
+                <h6>2. Use of Service</h6>
+                <p>SOAP is designed to facilitate the school admission process. You agree to provide accurate information.</p>
+                
+                <h6>3. Privacy</h6>
+                <p>We respect your privacy and handle your data according to our Privacy Policy.</p>
+                
+                <h6>4. Responsibilities</h6>
+                <p>You are responsible for maintaining the confidentiality of your account information.</p>
+                
+                <h6>5. Limitation of Liability</h6>
+                <p>SOAP is provided "as is" without warranties of any kind.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Privacy Policy</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Information We Collect</h6>
+                <p>We collect information necessary for the admission process including student details, parent information, and required documents.</p>
+                
+                <h6>How We Use Information</h6>
+                <p>Your information is used solely for processing school admissions and communicating with you about the application status.</p>
+                
+                <h6>Information Sharing</h6>
+                <p>We only share your information with the relevant school administration for admission purposes.</p>
+                
+                <h6>Data Security</h6>
+                <p>We implement appropriate security measures to protect your personal information.</p>
+                
+                <h6>Your Rights</h6>
+                <p>You have the right to access, update, or delete your personal information.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Phone number formatting
+            $('.phone-input').on('input', function() {
+                let value = $(this).val().replace(/\D/g, '');
+                
+                if (value.startsWith('0') && value.length <= 10) {
+                    // Format as 0XXX XXX XXX
+                    if (value.length > 4 && value.length <= 7) {
+                        value = value.replace(/(\d{4})(\d+)/, '$1 $2');
+                    } else if (value.length > 7) {
+                        value = value.replace(/(\d{4})(\d{3})(\d+)/, '$1 $2 $3');
+                    }
+                }
+                
+                $(this).val(value);
+            });
+            
+            // Form validation
+            $('form').on('submit', function(e) {
+                const phoneNumber = $('#PhoneNumber').val().replace(/\s/g, '');
+                
+                if (!isValidPhoneNumber(phoneNumber)) {
+                    e.preventDefault();
+                    alert('Please enter a valid phone number');
+                    return false;
+                }
+                
+                if (!$('#terms').is(':checked')) {
+                    e.preventDefault();
+                    alert('Please accept the terms and conditions');
+                    return false;
+                }
+            });
+            
+            function isValidPhoneNumber(phone) {
+                return /^0\d{9}$/.test(phone);
+            }
+        });
+    </script>
+}
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+    }
+    
+    .card-header {
+        border-radius: 15px 15px 0 0 !important;
+    }
+    
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+    
+    .btn {
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .phone-input {
+        font-family: 'Courier New', monospace;
+    }
+    
+    .alert {
+        border-radius: 8px;
+    }
+</style>

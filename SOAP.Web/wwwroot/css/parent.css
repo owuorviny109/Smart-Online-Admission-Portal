@@ -1,0 +1,230 @@
+/* Parent Portal Styles */
+
+.parent-portal {
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+.parent-nav {
+    background-color: #1e40af !important;
+}
+
+.parent-nav .navbar-brand {
+    color: white !important;
+    font-weight: 600;
+}
+
+.parent-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+    transition: color 0.3s ease;
+}
+
+.parent-nav .nav-link:hover {
+    color: white !important;
+}
+
+.welcome-card {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.application-form {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.form-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-section h4 {
+    color: #1e40af;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.progress-bar-custom {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e5e7eb;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+    transition: width 0.3s ease;
+}
+
+.document-upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.document-upload-area:hover {
+    border-color: #1e40af;
+    background-color: #f8fafc;
+}
+
+.document-upload-area.dragover {
+    border-color: #059669;
+    background-color: #f0fdf4;
+}
+
+.document-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.document-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-uploaded {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.status-verified {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status-rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.status-pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.application-status-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.status-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.status-icon.pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.status-icon.approved {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.status-icon.rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-primary-custom {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.btn-success-custom {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.btn-success-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.alert-custom {
+    border: none;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+}
+
+.alert-info-custom {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.alert-success-custom {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.alert-warning-custom {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.alert-danger-custom {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .welcome-card {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .application-form {
+        padding: 1.5rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+    
+    .document-upload-area {
+        padding: 1.5rem;
+    }
+}
