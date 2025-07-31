@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SOAP.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d4b3e41bab1298884cce9cec36f51e0ac835177")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+238447d51eb315a56e006128342cd8a4ec78bcee")]
 [assembly: System.Reflection.AssemblyProductAttribute("SOAP.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SOAP.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

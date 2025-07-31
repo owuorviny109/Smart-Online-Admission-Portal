@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SOAP.Web.Models;
+using SOAP.Web.Models.Entities;
 
 namespace SOAP.Web.Data.Configurations
 {

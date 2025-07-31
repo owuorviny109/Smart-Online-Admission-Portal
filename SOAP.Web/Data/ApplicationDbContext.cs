@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SOAP.Web.Models.Entities;
 using SOAP.Web.Data.Configurations;
+using System.Text.Json;
 
 namespace SOAP.Web.Data
 {
@@ -28,10 +29,19 @@ namespace SOAP.Web.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Apply entity configurations
+            // Apply core entity configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new SchoolConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationConfiguration());
+            modelBuilder.ApplyConfiguration(new DocumentConfiguration());
+            modelBuilder.ApplyConfiguration(new SmsLogConfiguration());
+            modelBuilder.ApplyConfiguration(new SchoolStudentConfiguration());
+            
+            // Apply security entity configurations
+            modelBuilder.ApplyConfiguration(new SecurityAuditLogConfiguration());
+            modelBuilder.ApplyConfiguration(new DataProcessingConsentConfiguration());
+            modelBuilder.ApplyConfiguration(new LoginAttemptConfiguration());
+            modelBuilder.ApplyConfiguration(new SecurityIncidentConfiguration());
 
             // Configure SchoolStudent relationships
             modelBuilder.Entity<SchoolStudent>()

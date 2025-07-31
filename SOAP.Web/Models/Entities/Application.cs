@@ -51,12 +51,20 @@ namespace SOAP.Web.Models.Entities
 
         public bool CheckedIn { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+        public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+        // Security and audit properties
+        public DateTimeOffset? SubmittedAt { get; set; }
+
+        public DateTimeOffset? ReviewedAt { get; set; }
+
+        [StringLength(450)]
+        public string? ReviewedBy { get; set; }
 
         // Navigation properties
-        public virtual School School { get; set; }
+        public virtual School School { get; set; } = null!;
         public virtual ICollection<Document> Documents { get; set; } = new List<Document>();
     }
 }

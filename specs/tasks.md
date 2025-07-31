@@ -13,20 +13,6 @@
   - [x] 2.1 Create entity models (User, School, Application, Document, SmsLog)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     - Define User entity with phone authentication
     - Create School entity with basic school information
     - Build Application entity with student bio-data fields
@@ -35,7 +21,10 @@
     - Design Document entity for file uploads
     - _Requirements: 1.2, 2.1, 3.1_
 
-  - [ ] 2.2 Configure Entity Framework DbContext and relationships
+  - [x] 2.2 Configure Entity Framework DbContext and relationships
+
+
+
     - Set up ApplicationDbContext with proper relationships
     - Configure entity relationships and constraints
     - Add database indexes for performance
