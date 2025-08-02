@@ -11,7 +11,7 @@ namespace SOAP.Web.Models
         public string? ErrorMessage { get; private set; }
         public List<string> Errors { get; private set; } = new();
 
-        private Result(bool success, T? data, string? errorMessage, List<string>? errors = null)
+        protected Result(bool success, T? data, string? errorMessage, List<string>? errors = null)
         {
             Success = success;
             Data = data;
@@ -44,7 +44,7 @@ namespace SOAP.Web.Models
         public string? ErrorMessage { get; private set; }
         public List<string> Errors { get; private set; } = new();
 
-        private Result(bool success, string? errorMessage, List<string>? errors = null)
+        protected Result(bool success, string? errorMessage, List<string>? errors = null)
         {
             Success = success;
             ErrorMessage = errorMessage;
@@ -77,12 +77,12 @@ namespace SOAP.Web.Models
         {
         }
 
-        public static ApplicationResult Success(int applicationId)
+        public static new ApplicationResult Success(int applicationId)
         {
             return new ApplicationResult(true, applicationId, null);
         }
 
-        public static new ApplicationResult Failure(string errorMessage)
+        public static ApplicationResult Failure(string errorMessage)
         {
             return new ApplicationResult(false, 0, errorMessage);
         }
@@ -103,12 +103,12 @@ namespace SOAP.Web.Models
         {
         }
 
-        public static RegistrationResult Success(string userId)
+        public static new RegistrationResult Success(string userId)
         {
             return new RegistrationResult(true, userId, null);
         }
 
-        public static new RegistrationResult Failure(string errorMessage)
+        public static RegistrationResult Failure(string errorMessage)
         {
             return new RegistrationResult(false, null, errorMessage);
         }
@@ -134,12 +134,12 @@ namespace SOAP.Web.Models
             ExpiresAt = expiresAt;
         }
 
-        public static OtpResult Success(string otpId, DateTime expiresAt)
+        public static new OtpResult Success(string otpId, DateTime expiresAt)
         {
             return new OtpResult(true, null, otpId, expiresAt);
         }
 
-        public static new OtpResult Failure(string errorMessage)
+        public static OtpResult Failure(string errorMessage)
         {
             return new OtpResult(false, errorMessage);
         }
@@ -160,12 +160,12 @@ namespace SOAP.Web.Models
             ApprovedAt = approvedAt;
         }
 
-        public static ApprovalResult Success(string admissionCode, DateTime approvedAt)
+        public static new ApprovalResult Success(string admissionCode, DateTime approvedAt)
         {
             return new ApprovalResult(true, null, admissionCode, approvedAt);
         }
 
-        public static new ApprovalResult Failure(string errorMessage)
+        public static ApprovalResult Failure(string errorMessage)
         {
             return new ApprovalResult(false, errorMessage);
         }
@@ -186,12 +186,12 @@ namespace SOAP.Web.Models
             RejectedAt = rejectedAt;
         }
 
-        public static RejectionResult Success(string reason, DateTime rejectedAt)
+        public static new RejectionResult Success(string reason, DateTime rejectedAt)
         {
             return new RejectionResult(true, null, reason, rejectedAt);
         }
 
-        public static new RejectionResult Failure(string errorMessage)
+        public static RejectionResult Failure(string errorMessage)
         {
             return new RejectionResult(false, errorMessage);
         }

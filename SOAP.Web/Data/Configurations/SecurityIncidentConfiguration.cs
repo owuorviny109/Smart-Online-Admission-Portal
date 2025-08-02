@@ -8,71 +8,60 @@ namespace SOAP.Web.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<SecurityIncidentRecord> builder)
         {
+            builder.ToTable("SecurityIncidents");
+
             builder.HasKey(e => e.Id);
-            
-            // Security incident tracking
+
             builder.Property(e => e.IncidentType)
                 .IsRequired()
-                .HasMaxLength(50)
-                .HasComment("Type of security incident (BRUTE_FORCE, DATA_BREACH, etc.)");
-            
+                .HasMaxLength(50);
+
             builder.Property(e => e.Severity)
                 .IsRequired()
-                .HasComment("Severity level (1=Low, 2=Medium, 3=High, 4=Critical)");
-            
+                .HasConversion<int>();
+
             builder.Property(e => e.Description)
                 .IsRequired()
-                .HasMaxLength(1000)
-                .HasComment("Detailed description of the incident");
-            
+                .HasMaxLength(1000);
+
             builder.Property(e => e.AffectedUserId)
-                .HasMaxLength(450)
-                .HasComment("User affected by the incident");
-            
+                .HasMaxLength(450);
+
             builder.Property(e => e.SourceIpAddress)
-                .HasMaxLength(45)
-                .HasComment("Source IP address of the incident");
-            
+                .HasMaxLength(45);
+
             builder.Property(e => e.Status)
                 .IsRequired()
                 .HasMaxLength(20)
-                .HasDefaultValue("Open")
-                .HasComment("Incident status (Open, Investigating, Resolved, Closed)");
-            
+                .HasDefaultValue("Open");
+
             builder.Property(e => e.AutomaticResponse)
-                .HasMaxLength(500)
-                .HasComment("Automatic response taken by the system");
-            
+                .HasMaxLength(500);
+
+            builder.Property(e => e.ManualResponse)
+                .HasColumnType("nvarchar(max)");
+
             builder.Property(e => e.DetectedAt)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()")
-                .HasComment("When the incident was detected");
-            
-            builder.Property(e => e.ResolvedAt)
-                .HasComment("When the incident was resolved");
-            
-            builder.Property(e => e.AssignedTo)
-                .HasMaxLength(450)
-                .HasComment("Admin user assigned to handle the incident");
-            
-            // Security incident management indexes
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            builder.Property(e => e.ResolvedBy)
+                .HasMaxLength(450);
+
+            // Indexes for security monitoring and reporting
             builder.HasIndex(e => new { e.IncidentType, e.DetectedAt })
                 .HasDatabaseName("IX_SecurityIncidents_Type_Date");
-            
+
             builder.HasIndex(e => new { e.Status, e.Severity })
                 .HasDatabaseName("IX_SecurityIncidents_Status_Severity");
-            
-            builder.HasIndex(e => new { e.Severity, e.DetectedAt })
-                .HasDatabaseName("IX_SecurityIncidents_Severity_Date")
-                .HasFilter("Status IN ('Open', 'Investigating')");
-            
-            builder.HasIndex(e => e.SourceIpAddress)
-                .HasDatabaseName("IX_SecurityIncidents_SourceIP")
-                .HasFilter("SourceIpAddress IS NOT NULL");
-            
+
+            builder.HasIndex(e => new { e.SourceIpAddress, e.DetectedAt })
+                .HasDatabaseName("IX_SecurityIncidents_IP_Date");
+
             builder.HasIndex(e => e.AffectedUserId)
-                .HasDatabaseName("IX_SecurityIncidents_AffectedUser")
-                .HasFilter("AffectedUserId IS NOT NULL");
+                .HasDatabaseName("IX_SecurityIncidents_AffectedUser");
+
+            // Note: AffectedUserId and ResolvedBy are stored as strings for flexibility
+            // No direct foreign key relationships to User table due to type mismatch
         }
     }
 }

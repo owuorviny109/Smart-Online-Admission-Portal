@@ -62,7 +62,7 @@ namespace SOAP.Web.Services.BackgroundServices
 
                 await CreateSecurityIncidentAsync(context, 
                     "BRUTE_FORCE_IP", 
-                    3, // High severity
+                    SecurityIncidentSeverity.High,
                     $"Brute force attack detected from IP {suspiciousIP.IpAddress} with {suspiciousIP.Count} failed attempts in 15 minutes",
                     sourceIp: suspiciousIP.IpAddress);
 
@@ -82,7 +82,7 @@ namespace SOAP.Web.Services.BackgroundServices
             {
                 await CreateSecurityIncidentAsync(context,
                     "BRUTE_FORCE_PHONE",
-                    2, // Medium severity
+                    SecurityIncidentSeverity.Medium,
                     $"Multiple failed login attempts for phone {suspiciousPhone.PhoneNumber}: {suspiciousPhone.Count} attempts in 15 minutes");
 
                 _logger.LogWarning("Multiple failed login attempts for phone: {PhoneNumber} with {Count} attempts",
@@ -110,7 +110,7 @@ namespace SOAP.Web.Services.BackgroundServices
             {
                 await CreateSecurityIncidentAsync(context,
                     "UNUSUAL_ACCESS_PATTERN",
-                    2, // Medium severity
+                    SecurityIncidentSeverity.Medium,
                     $"User {unusual.UserId} accessed from {unusual.IpCount} different IP addresses in 1 hour",
                     affectedUserId: unusual.UserId);
 
@@ -138,7 +138,7 @@ namespace SOAP.Web.Services.BackgroundServices
             {
                 await CreateSecurityIncidentAsync(context,
                     "POTENTIAL_DATA_EXFILTRATION",
-                    4, // Critical severity
+                    SecurityIncidentSeverity.Critical,
                     $"User {excessive.UserId} accessed {excessive.Count} documents in 30 minutes - potential data exfiltration",
                     affectedUserId: excessive.UserId);
 
@@ -169,7 +169,7 @@ namespace SOAP.Web.Services.BackgroundServices
 
         private async Task CreateSecurityIncidentAsync(ApplicationDbContext context, 
             string incidentType, 
-            int severity, 
+            SecurityIncidentSeverity severity, 
             string description, 
             string? affectedUserId = null, 
             string? sourceIp = null)

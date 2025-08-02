@@ -101,7 +101,7 @@ namespace SOAP.Web.Data.Configurations
             
             builder.HasIndex(d => new { d.IsVirusScanPassed, d.VirusScanDate })
                 .HasDatabaseName("IX_Documents_VirusScan")
-                .HasFilter("IsVirusScanPassed = 0 OR VirusScanDate IS NULL");
+                .HasFilter("IsVirusScanPassed = 0");
             
             // Security monitoring index
             builder.HasIndex(d => new { d.ApplicationId, d.AccessLevel, d.UploadedAt })

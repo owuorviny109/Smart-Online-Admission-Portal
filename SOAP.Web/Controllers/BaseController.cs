@@ -28,7 +28,7 @@ namespace SOAP.Web.Controllers
         {
             try
             {
-                var securityEvent = new SecurityEvent
+                var securityEvent = new Services.Interfaces.SecurityEvent
                 {
                     EventType = eventType,
                     Success = success,
@@ -53,7 +53,7 @@ namespace SOAP.Web.Controllers
         /// Handles model validation consistently across controllers
         /// Template Method Pattern: Common validation logic
         /// </summary>
-        protected virtual IActionResult HandleModelValidation<T>(T model, string viewName = null) where T : class
+        protected virtual IActionResult HandleModelValidation<T>(T model, string? viewName = null) where T : class
         {
             if (!ModelState.IsValid)
             {
@@ -111,7 +111,7 @@ namespace SOAP.Web.Controllers
         /// Override to add consistent error handling
         /// Template Method Pattern: Consistent error handling across controllers
         /// </summary>
-        protected override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+        public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
         {
             base.OnActionExecuting(context);
             
@@ -125,7 +125,7 @@ namespace SOAP.Web.Controllers
         /// Override to add consistent success logging
         /// Template Method Pattern: Consistent success handling
         /// </summary>
-        protected override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
         {
             base.OnActionExecuted(context);
             

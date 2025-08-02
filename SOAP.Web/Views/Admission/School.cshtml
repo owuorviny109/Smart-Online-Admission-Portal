@@ -1,0 +1,272 @@
+@{
+    ViewData["Title"] = $"{ViewBag.School?.Name} - Admission Portal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <!-- Left side - School information -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary text-white">
+            <div class="text-center p-4">
+                <div class="mb-4">
+                    @if (!string.IsNullOrEmpty(ViewBag.School?.LogoPath))
+                    {
+                        <img src="@ViewBag.School.LogoPath" alt="@ViewBag.School.Name Logo" class="img-fluid mb-3" style="max-height: 100px;">
+                    }
+                    else
+                    {
+                        <i class="fas fa-graduation-cap fa-5x mb-3"></i>
+                    }
+                    <h1 class="display-5 fw-bold">@ViewBag.School?.Name</h1>
+                    <p class="lead">@ViewBag.School?.County County</p>
+                    <p class="mb-4">Online Admission Portal</p>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-users fa-2x mb-2"></i>
+                                <h5>@ViewBag.PlacedStudentsCount</h5>
+                                <p class="small">Students Placed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-mobile-alt fa-2x mb-2"></i>
+                                <h5>Online Process</h5>
+                                <p class="small">Complete admission from home</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-upload fa-2x mb-2"></i>
+                                <h5>Upload Documents</h5>
+                                <p class="small">Submit required documents securely</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-clock fa-2x mb-2"></i>
+                                <h5>Skip Queues</h5>
+                                <p class="small">Fast check-in on reporting day</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side - KCPE verification form -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="w-100" style="max-width: 400px;">
+                <div class="text-center mb-4">
+                    <h2 class="h3 mb-3">Verify Your Placement</h2>
+                    <p class="text-muted">Enter your KCPE Index Number to verify your placement at @ViewBag.School?.Name</p>
+                    
+                    @if (ViewBag.HasPlacementData == false)
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Notice:</strong> This school has not yet uploaded their placement list. Please contact the school administration.
+                        </div>
+                    }
+                    else if (ViewBag.PlacedStudentsCount > 0)
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>@ViewBag.PlacedStudentsCount students</strong> have been placed at this school.
+                        </div>
+                    }
+                </div>
+
+                <!-- Display messages -->
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        @TempData["Success"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Info"] != null)
+                {
+                    <div class="alert alert-info alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        @TempData["Info"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                @if (TempData["Warning"] != null)
+                {
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @TempData["Warning"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <!-- KCPE Verification Form -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form asp-action="VerifyKcpe" method="post" id="kcpeForm">
+                            <input type="hidden" name="schoolId" value="@ViewBag.School?.Id" />
+                            
+                            <div class="mb-3">
+                                <label for="kcpeIndex" class="form-label">
+                                    <i class="fas fa-id-card me-2"></i>KCPE Index Number
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg" 
+                                       id="kcpeIndex" 
+                                       name="kcpeIndex" 
+                                       placeholder="e.g. 12345678901" 
+                                       maxlength="11"
+                                       pattern="[0-9]{11}"
+                                       value="@TempData["AttemptedKcpeIndex"]"
+                                       required>
+                                <div class="form-text">Enter your 11-digit KCPE Index Number</div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-3" @(ViewBag.HasPlacementData == false ? "disabled" : "")>
+                                <i class="fas fa-search me-2"></i>Verify Placement
+                            </button>
+                        </form>
+
+                        @if (TempData["ShowFallbackOptions"] != null && (bool)TempData["ShowFallbackOptions"])
+                        {
+                            <div class="border-top pt-3 mt-3">
+                                <h6 class="text-muted mb-3">
+                                    <i class="fas fa-question-circle me-2"></i>KCPE Index Not Found?
+                                </h6>
+                                
+                                <div class="accordion" id="fallbackOptions">
+                                    <!-- Option A: Contact School -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#contactSchool">
+                                                <i class="fas fa-phone me-2"></i>Contact School Directly
+                                            </button>
+                                        </h2>
+                                        <div id="contactSchool" class="accordion-collapse collapse" data-bs-parent="#fallbackOptions">
+                                            <div class="accordion-body">
+                                                <p class="small">Contact @ViewBag.School?.Name to verify your placement:</p>
+                                                <ul class="small">
+                                                    <li>Phone: @(ViewBag.School?.ContactPhone ?? "Contact school office")</li>
+                                                    <li>Email: @(ViewBag.School?.ContactEmail ?? "Visit school office")</li>
+                                                    <li>Ask them to check their placement list</li>
+                                                    <li>Verify your KCPE Index Number spelling</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Option B: Manual Entry -->
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#manualEntry">
+                                                <i class="fas fa-edit me-2"></i>Proceed Anyway (Admin Review)
+                                            </button>
+                                        </h2>
+                                        <div id="manualEntry" class="accordion-collapse collapse" data-bs-parent="#fallbackOptions">
+                                            <div class="accordion-body">
+                                                <p class="small text-warning">
+                                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                                    Your application will be flagged for manual review by school administration.
+                                                </p>
+                                                <form asp-action="ProceedManually" method="post">
+                                                    <input type="hidden" name="schoolId" value="@ViewBag.School?.Id" />
+                                                    <input type="hidden" name="kcpeIndex" value="@TempData["AttemptedKcpeIndex"]" />
+                                                    
+                                                    <div class="mb-2">
+                                                        <input type="text" class="form-control form-control-sm" name="studentName" placeholder="Student Full Name" required>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <input type="tel" class="form-control form-control-sm" name="parentPhone" placeholder="Parent Phone Number" required>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-warning btn-sm w-100">
+                                                        <i class="fas fa-flag me-1"></i>Submit for Review
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="text-center mt-3">
+                            <p class="small text-muted mb-2">Already have an account?</p>
+                            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login Here
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="text-center mt-4">
+                    <a href="@Url.Action("Index", "Admission")" class="btn btn-link">
+                        <i class="fas fa-arrow-left me-1"></i>Back to School Selection
+                    </a>
+                </div>
+
+                <!-- Help section -->
+                <div class="text-center mt-3">
+                    <p class="small text-muted">
+                        Need help? 
+                        <a href="@Url.Action("Help", "Admission")" class="text-decoration-none">
+                            <i class="fas fa-question-circle me-1"></i>View FAQ
+                        </a>
+                        or call: <strong>0700-XXX-XXX</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Format KCPE index as user types
+        document.getElementById('kcpeIndex').addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limit to 11 digits
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            e.target.value = value;
+        });
+
+        // Form validation
+        document.getElementById('kcpeForm').addEventListener('submit', function(e) {
+            const kcpeIndex = document.getElementById('kcpeIndex').value;
+            
+            if (kcpeIndex.length !== 11) {
+                e.preventDefault();
+                alert('Please enter a valid 11-digit KCPE Index Number');
+                return false;
+            }
+        });
+    </script>
+}

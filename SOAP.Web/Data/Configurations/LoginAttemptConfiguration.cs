@@ -8,62 +8,45 @@ namespace SOAP.Web.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<LoginAttempt> builder)
         {
+            builder.ToTable("LoginAttempts");
+
             builder.HasKey(e => e.Id);
-            
-            // Login attempt tracking for security monitoring
+
             builder.Property(e => e.PhoneNumber)
                 .IsRequired()
-                .HasMaxLength(15)
-                .HasComment("Phone number used in login attempt");
-            
+                .HasMaxLength(15);
+
             builder.Property(e => e.IpAddress)
-                .HasMaxLength(45) // IPv6 support
-                .HasComment("IP address of login attempt");
-            
+                .HasMaxLength(45);
+
             builder.Property(e => e.UserAgent)
-                .HasMaxLength(500)
-                .HasComment("User agent of login attempt");
-            
-            builder.Property(e => e.Success)
-                .IsRequired()
-                .HasComment("Whether login attempt was successful");
-            
+                .HasMaxLength(500);
+
             builder.Property(e => e.FailureReason)
-                .HasMaxLength(200)
-                .HasComment("Reason for login failure");
-            
+                .HasMaxLength(200);
+
             builder.Property(e => e.AttemptedAt)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()")
-                .HasComment("When the login attempt occurred");
-            
-            builder.Property(e => e.OtpAttempts)
-                .HasDefaultValue(0)
-                .HasComment("Number of OTP attempts for this login");
-            
-            builder.Property(e => e.IsBlocked)
-                .HasDefaultValue(false)
-                .HasComment("Whether this IP/phone is temporarily blocked");
-            
-            // Security monitoring indexes
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            builder.Property(e => e.OtpCode)
+                .HasMaxLength(100); // Hashed OTP
+
+            // Indexes for security monitoring and rate limiting
             builder.HasIndex(e => new { e.PhoneNumber, e.AttemptedAt })
                 .HasDatabaseName("IX_LoginAttempts_Phone_Date");
-            
+
             builder.HasIndex(e => new { e.IpAddress, e.AttemptedAt })
                 .HasDatabaseName("IX_LoginAttempts_IP_Date");
-            
+
             builder.HasIndex(e => new { e.Success, e.AttemptedAt })
                 .HasDatabaseName("IX_LoginAttempts_Success_Date");
-            
-            // Brute force detection index
-            builder.HasIndex(e => new { e.IpAddress, e.Success, e.AttemptedAt })
-                .HasDatabaseName("IX_LoginAttempts_BruteForce")
-                .HasFilter("Success = 0");
-            
-            // Account lockout monitoring
+
             builder.HasIndex(e => new { e.PhoneNumber, e.Success, e.AttemptedAt })
-                .HasDatabaseName("IX_LoginAttempts_AccountLockout")
-                .HasFilter("Success = 0");
+                .HasDatabaseName("IX_LoginAttempts_Phone_Success_Date");
+
+            // Relationships - Link to User via PhoneNumber
+            // Note: This creates a relationship based on PhoneNumber matching
+            // The User entity will be resolved in the service layer
         }
     }
 }

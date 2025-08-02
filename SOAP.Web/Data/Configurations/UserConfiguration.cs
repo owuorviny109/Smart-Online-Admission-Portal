@@ -62,7 +62,7 @@ namespace SOAP.Web.Data.Configurations
             
             builder.HasIndex(u => u.LockedUntil)
                 .HasDatabaseName("IX_Users_LockedUntil")
-                .HasFilter("LockedUntil IS NOT NULL AND LockedUntil > GETUTCDATE()");
+                .HasFilter("LockedUntil IS NOT NULL");
             
             builder.HasIndex(u => new { u.IsActive, u.LastLoginAt })
                 .HasDatabaseName("IX_Users_Active_LastLogin")

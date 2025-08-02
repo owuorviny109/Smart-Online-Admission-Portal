@@ -33,13 +33,18 @@ namespace SOAP.Web
             // Configure Memory Cache for rate limiting
             builder.Services.AddMemoryCache();
 
+            // Add HTTP Context Accessor for authorization handlers
+            builder.Services.AddHttpContextAccessor();
+
             // Configure Session Management with security
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(
                     int.Parse(builder.Configuration["Security:Authentication:SessionTimeoutMinutes"] ?? "20"));
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+                    ? CookieSecurePolicy.None 
+                    : CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.Name = "__SOAP_Session";
             });
@@ -56,7 +61,9 @@ namespace SOAP.Web
                 options.LogoutPath = "/Account/Logout";
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+                    ? CookieSecurePolicy.None 
+                    : CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.Name = "__SOAP_Auth";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(
@@ -90,7 +97,9 @@ namespace SOAP.Web
                 options.HeaderName = "X-CSRF-TOKEN";
                 options.Cookie.Name = "__SOAP_CSRF";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() 
+                    ? CookieSecurePolicy.None 
+                    : CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Strict;
             });
 
@@ -101,7 +110,13 @@ namespace SOAP.Web
             builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<ISecurityAuditService, SecurityAuditService>();
             builder.Services.AddScoped<IDataProtectionService, DataProtectionService>();
-            builder.Services.AddScoped<IRateLimitingService, RateLimitingService>();
+            // builder.Services.AddScoped<IRateLimitingService, RateLimitingService>(); // Temporarily disabled
+
+            // Register Advanced Security Services
+            builder.Services.AddScoped<IRoleValidationService, RoleValidationService>();
+            builder.Services.AddScoped<IDataFilterService, DataFilterService>();
+            builder.Services.AddScoped<IAdvancedSecurityService, AdvancedSecurityService>();
+            builder.Services.AddScoped<IMultiFactorAuthService, MultiFactorAuthService>();
 
             // Register Notification Services (Strategy Pattern - OCP)
             builder.Services.AddScoped<INotificationService, NotificationService>();
@@ -145,9 +160,15 @@ namespace SOAP.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Configure Area Routes first (more specific routes)
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+            // Main application route - redirect to admission portal
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Admission}/{action=Index}/{id?}");
 
             app.Run();
         }

@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "SOAP - Smart Online Admission Portal";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row min-vh-100">
+        <!-- Left side - School branding and info -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center bg-primary text-white">
+            <div class="text-center p-4">
+                <div class="mb-4">
+                    <i class="fas fa-graduation-cap fa-5x mb-3"></i>
+                    <h1 class="display-4 fw-bold">SOAP</h1>
+                    <p class="lead">Smart Online Admission Portal</p>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-mobile-alt fa-2x mb-2"></i>
+                                <h5>Complete Online</h5>
+                                <p class="small">Fill your admission form from anywhere</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-upload fa-2x mb-2"></i>
+                                <h5>Upload Documents</h5>
+                                <p class="small">Submit required documents securely</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-bell fa-2x mb-2"></i>
+                                <h5>SMS Updates</h5>
+                                <p class="small">Get notified about your application status</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card bg-transparent border-light">
+                            <div class="card-body">
+                                <i class="fas fa-clock fa-2x mb-2"></i>
+                                <h5>Save Time</h5>
+                                <p class="small">Skip long queues on reporting day</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side - School selection -->
+        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="w-100" style="max-width: 500px;">
+                <div class="text-center mb-4">
+                    <h2 class="h3 mb-3">Select Your School</h2>
+                    <p class="text-muted">Choose your school to begin the online admission process</p>
+                </div>
+
+                <!-- Display messages -->
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        @TempData["Error"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                }
+
+                <!-- School Selection -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        @if (ViewBag.SchoolsWithStatus != null && ((IEnumerable<dynamic>)ViewBag.SchoolsWithStatus).Any())
+                        {
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-school me-2"></i>Available Schools
+                                </label>
+                                <div class="list-group">
+                                    @foreach (var item in (IEnumerable<dynamic>)ViewBag.SchoolsWithStatus)
+                                    {
+                                        var school = item.School;
+                                        var hasData = item.HasPlacementData;
+                                        var placementCount = item.PlacementCount;
+                                        
+                                        <a href="@Url.Action("School", "Admission", new { id = school.Id })" 
+                                           class="list-group-item list-group-item-action d-flex justify-content-between align-items-center @(hasData ? "" : "list-group-item-warning")">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    @school.Name
+                                                    @if (hasData)
+                                                    {
+                                                        <span class="badge bg-success ms-2">
+                                                            <i class="fas fa-check me-1"></i>Ready
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-warning text-dark ms-2">
+                                                            <i class="fas fa-clock me-1"></i>Pending
+                                                        </span>
+                                                    }
+                                                </h6>
+                                                <small class="text-muted">
+                                                    @school.County County
+                                                    @if (hasData)
+                                                    {
+                                                        <span> • @placementCount students placed</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span> • Placement data not uploaded</span>
+                                                    }
+                                                </small>
+                                            </div>
+                                            <i class="fas fa-arrow-right @(hasData ? "text-primary" : "text-warning")"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                            
+                            @if (ViewBag.SchoolsWithData < ViewBag.SchoolCount)
+                            {
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <strong>Notice:</strong> Some schools are still uploading their placement data. 
+                                    Contact your school if you don't see the "Ready" status.
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-4">
+                                <i class="fas fa-school fa-3x text-muted mb-3"></i>
+                                <h5>No Schools Available</h5>
+                                <p class="text-muted">No schools are currently accepting applications through SOAP.</p>
+                            </div>
+                        }
+
+                        <div class="text-center mt-4">
+                            <p class="small text-muted mb-2">Already have an account?</p>
+                            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login Here
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help section -->
+                <div class="text-center mt-4">
+                    <p class="small text-muted">
+                        Need help? 
+                        <a href="@Url.Action("Help", "Admission")" class="text-decoration-none">
+                            <i class="fas fa-question-circle me-1"></i>View FAQ
+                        </a>
+                        or call: <strong>0700-XXX-XXX</strong>
+                    </p>
+                </div>
+
+                @if (ViewBag.SchoolCount != null && ViewBag.SchoolCount > 0)
+                {
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-school me-1"></i>
+                            Serving @ViewBag.SchoolCount schools nationwide
+                        </small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Format KCPE index as user types
+        document.getElementById('kcpeIndex').addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            let value = e.target.value.replace(/\D/g, '');
+            
+            // Limit to 11 digits
+            if (value.length > 11) {
+                value = value.substring(0, 11);
+            }
+            
+            e.target.value = value;
+        });
+
+        // Form validation
+        document.getElementById('kcpeForm').addEventListener('submit', function(e) {
+            const kcpeIndex = document.getElementById('kcpeIndex').value;
+            
+            if (kcpeIndex.length !== 11) {
+                e.preventDefault();
+                alert('Please enter a valid 11-digit KCPE Index Number');
+                return false;
+            }
+        });
+    </script>
+}

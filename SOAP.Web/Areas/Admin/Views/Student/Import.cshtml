@@ -1,0 +1,125 @@
+@{
+    ViewData["Title"] = "Upload Placement List";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Upload Placement List</h1>
+        <a href="@Url.Action("Index", "Student", new { area = "Admin" })" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Students
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-file-upload me-2"></i>Upload Ministry Placement Data
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="placementFile" class="form-label">
+                                <i class="fas fa-file-csv me-2"></i>Placement File (CSV/Excel)
+                            </label>
+                            <input type="file" class="form-control" id="placementFile" name="placementFile" 
+                                   accept=".csv,.xlsx,.xls" required>
+                            <div class="form-text">
+                                Upload the placement list received from the Ministry of Education.
+                                Supported formats: CSV, Excel (.xlsx, .xls)
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="academicYear" class="form-label">Academic Year</label>
+                            <select class="form-select" id="academicYear" name="academicYear" required>
+                                <option value="">Select Academic Year</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="replaceExisting" name="replaceExisting">
+                                <label class="form-check-label" for="replaceExisting">
+                                    Replace existing placement data for this year
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload me-2"></i>Upload Placement Data
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-info">
+                        <i class="fas fa-info-circle me-2"></i>File Format Requirements
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">Your placement file should contain the following columns:</p>
+                    <ul class="small">
+                        <li><strong>KCPE Index Number</strong> - 11-digit student index</li>
+                        <li><strong>Student Name</strong> - Full student name</li>
+                        <li><strong>KCPE Score</strong> - Student's KCPE score</li>
+                        <li><strong>Year</strong> - Academic year (optional)</li>
+                    </ul>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Important:</strong> Only upload official placement data received from the Ministry of Education.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mt-3">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">
+                        <i class="fas fa-download me-2"></i>Sample Template
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="small">Download a sample CSV template to see the expected format.</p>
+                    <a href="#" class="btn btn-success btn-sm w-100">
+                        <i class="fas fa-download me-2"></i>Download Template
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('placementFile');
+            const academicYear = document.getElementById('academicYear').value;
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a file to upload.');
+                return;
+            }
+            
+            if (!academicYear) {
+                alert('Please select an academic year.');
+                return;
+            }
+            
+            // Here you would implement the actual file upload logic
+            alert('File upload functionality will be implemented in the next phase.');
+        });
+    </script>
+}

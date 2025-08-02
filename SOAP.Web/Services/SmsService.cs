@@ -27,7 +27,7 @@ namespace SOAP.Web.Services
                 {
                     PhoneNumber = phoneNumber,
                     MessageType = "Outgoing",
-                    Content = message,
+                    Message = message,
                     Status = "Sent",
                     ApplicationId = applicationId
                 };
@@ -76,7 +76,7 @@ namespace SOAP.Web.Services
             {
                 PhoneNumber = phoneNumber,
                 MessageType = "Incoming",
-                Content = message,
+                Message = message,
                 Status = "Received"
             };
 

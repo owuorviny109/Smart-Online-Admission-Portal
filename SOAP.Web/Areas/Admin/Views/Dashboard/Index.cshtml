@@ -1,0 +1,790 @@
+@model SOAP.Web.Areas.Admin.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Admin Dashboard</h1>
+                <div class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    @DateTime.Now.ToString("MMMM dd, yyyy")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Applications
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalApplications</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Review
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingApplications</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Approved
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.ApprovedApplications</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Rejected
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.RejectedApplications</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-upload me-2"></i>Placement Data Management
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Upload and manage student placement lists from the Ministry.</p>
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Import", "Student", new { area = "Admin" })" class="btn btn-primary">
+                            <i class="fas fa-file-upload me-2"></i>Upload Placement List
+                        </a>
+                        <a href="@Url.Action("Index", "Student", new { area = "Admin" })" class="btn btn-outline-primary">
+                            <i class="fas fa-users me-2"></i>Manage Students
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-tasks me-2"></i>Application Management
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Review and process student applications.</p>
+                    <div class="d-grid gap-2">
+                        <a href="@Url.Action("Index", "Application", new { area = "Admin" })" class="btn btn-warning">
+                            <i class="fas fa-eye me-2"></i>Review Applications
+                        </a>
+                        <a href="@Url.Action("Pending", "Application", new { area = "Admin" })" class="btn btn-outline-warning">
+                            <i class="fas fa-clock me-2"></i>Pending Reviews (@Model.PendingApplications)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="row mb-4">
+        <!-- Application Status Pie Chart -->
+        <div class="col-xl-4 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>Application Status
+                    </h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow">
+                            <a class="dropdown-item" href="#">Export Data</a>
+                            <a class="dropdown-item" href="#">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="applicationStatusChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-warning"></i> Pending (@Model.PendingApplications)
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Approved (@Model.ApprovedApplications)
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-danger"></i> Rejected (@Model.RejectedApplications)
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Applications Line Chart -->
+        <div class="col-xl-8 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-line me-2"></i>Daily Applications Trend (Last 7 Days)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="dailyApplicationsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="row mb-4">
+        <!-- Monthly Trends Multi-Line Chart -->
+        <div class="col-xl-8 col-lg-7 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-area me-2"></i>Monthly Trends (Last 6 Months)
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="monthlyTrendsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- School Performance Radar Chart -->
+        <div class="col-xl-4 col-lg-5 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-school me-2"></i>Top Schools Performance
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="schoolPerformanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Analytics Row -->
+    <div class="row mb-4">
+        <!-- Document Status Bar Chart -->
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-bar me-2"></i>Document Verification Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="documentStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- School Performance Doughnut Chart -->
+        <div class="col-xl-6 col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-school me-2"></i>Placement Data Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="placementDataChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Data Uploaded
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-warning"></i> Pending Upload
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity & System Stats -->
+    <div class="row">
+        <!-- Recent Activity -->
+        <div class="col-xl-8 col-lg-7 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-history me-2"></i>Recent Activity
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-success"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">New Application Submitted</h6>
+                                <p class="timeline-text">John Doe submitted application for Alliance High School</p>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Document Uploaded</h6>
+                                <p class="timeline-text">Birth certificate uploaded for application #12345</p>
+                                <small class="text-muted">4 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-warning"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Application Approved</h6>
+                                <p class="timeline-text">Mary Wanjiku's application has been approved</p>
+                                <small class="text-muted">6 hours ago</small>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-primary"></div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Placement Data Updated</h6>
+                                <p class="timeline-text">2024 placement list uploaded successfully</p>
+                                <small class="text-muted">1 day ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Statistics -->
+        <div class="col-xl-4 col-lg-5 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-cogs me-2"></i>System Statistics
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center mb-3">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Total Students Placed
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">1,247</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+
+                    <div class="row no-gutters align-items-center mb-3">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Documents Processed
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">3,741</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+
+                    <div class="row no-gutters align-items-center mb-3">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                SMS Notifications Sent
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">892</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-sms fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                System Uptime
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">99.9%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-server fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+.border-left-danger {
+    border-left: 0.25rem solid #e74a3b !important;
+}
+
+/* Timeline Styles */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e3e6f0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #e3e6f0;
+}
+
+.timeline-content {
+    background: #f8f9fc;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 3px solid #4e73df;
+}
+
+.timeline-title {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.timeline-text {
+    margin: 0 0 5px 0;
+    font-size: 13px;
+    color: #6e707e;
+}
+
+/* Chart containers */
+.chart-area {
+    position: relative;
+    height: 300px;
+}
+
+.chart-pie {
+    position: relative;
+    height: 250px;
+}
+
+.chart-bar {
+    position: relative;
+    height: 300px;
+}
+
+/* Enhanced card hover effects */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Animated counters */
+.counter {
+    animation: countUp 2s ease-out;
+}
+
+@@keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Progress bars */
+.progress-sm {
+    height: 0.5rem;
+}
+
+.progress-xs {
+    height: 0.25rem;
+}
+</style>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // Application Status Pie Chart with Animation
+        const applicationStatusCtx = document.getElementById('applicationStatusChart').getContext('2d');
+        new Chart(applicationStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Approved', 'Rejected', 'Incomplete'],
+                datasets: [{
+                    data: [@Model.PendingApplications, @Model.ApprovedApplications, @Model.RejectedApplications, @Model.IncompleteApplications],
+                    backgroundColor: ['#f6c23e', '#1cc88a', '#e74a3b', '#6c757d'],
+                    hoverBackgroundColor: ['#f4b619', '#17a673', '#e02d1b', '#5a6268'],
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                    hoverBorderWidth: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = ((context.parsed * 100) / total).toFixed(1);
+                                return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '65%',
+                animation: {
+                    animateRotate: true,
+                    duration: 2000
+                }
+            }
+        });
+
+        // Daily Applications Multi-Line Chart with Real Data
+        const dailyApplicationsCtx = document.getElementById('dailyApplicationsChart').getContext('2d');
+        const dailyData = @Html.Raw(Json.Serialize(Model.DailyApplications));
+        
+        new Chart(dailyApplicationsCtx, {
+            type: 'line',
+            data: {
+                labels: dailyData.map(d => new Date(d.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })),
+                datasets: [{
+                    label: 'Total Applications',
+                    data: dailyData.map(d => d.applicationCount),
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4e73df',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }, {
+                    label: 'Approved',
+                    data: dailyData.map(d => d.approvedCount),
+                    borderColor: '#1cc88a',
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#1cc88a',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }, {
+                    label: 'Rejected',
+                    data: dailyData.map(d => d.rejectedCount),
+                    borderColor: '#e74a3b',
+                    backgroundColor: 'rgba(231, 74, 59, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    pointBackgroundColor: '#e74a3b',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+
+        // Document Status Bar Chart
+        const documentStatusCtx = document.getElementById('documentStatusChart').getContext('2d');
+        new Chart(documentStatusCtx, {
+            type: 'bar',
+            data: {
+                labels: ['KCPE Slip', 'Birth Certificate', 'Medical Form'],
+                datasets: [{
+                    label: 'Verified',
+                    data: [85, 78, 65],
+                    backgroundColor: '#1cc88a',
+                    borderRadius: 4
+                }, {
+                    label: 'Pending',
+                    data: [15, 22, 35],
+                    backgroundColor: '#f6c23e',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Monthly Trends Multi-Line Chart
+        const monthlyTrendsCtx = document.getElementById('monthlyTrendsChart').getContext('2d');
+        const monthlyData = @Html.Raw(Json.Serialize(Model.MonthlyTrends));
+        
+        new Chart(monthlyTrendsCtx, {
+            type: 'line',
+            data: {
+                labels: monthlyData.map(d => d.month),
+                datasets: [{
+                    label: 'Applications',
+                    data: monthlyData.map(d => d.applications),
+                    borderColor: '#4e73df',
+                    backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Documents',
+                    data: monthlyData.map(d => d.documents),
+                    borderColor: '#1cc88a',
+                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4
+                }, {
+                    label: 'SMS Sent',
+                    data: monthlyData.map(d => d.smssSent),
+                    borderColor: '#f6c23e',
+                    backgroundColor: 'rgba(246, 194, 62, 0.1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // School Performance Polar Area Chart
+        const schoolPerformanceCtx = document.getElementById('schoolPerformanceChart').getContext('2d');
+        const schoolData = @Html.Raw(Json.Serialize(Model.ApplicationsBySchool.Take(5)));
+        
+        new Chart(schoolPerformanceCtx, {
+            type: 'polarArea',
+            data: {
+                labels: schoolData.map(s => s.schoolName.split(' ')[0]), // First word of school name
+                datasets: [{
+                    label: 'Applications Received',
+                    data: schoolData.map(s => s.applicationsReceived),
+                    backgroundColor: [
+                        'rgba(78, 115, 223, 0.8)',
+                        'rgba(28, 200, 138, 0.8)',
+                        'rgba(246, 194, 62, 0.8)',
+                        'rgba(231, 74, 59, 0.8)',
+                        'rgba(108, 117, 125, 0.8)'
+                    ],
+                    borderColor: [
+                        '#4e73df',
+                        '#1cc88a',
+                        '#f6c23e',
+                        '#e74a3b',
+                        '#6c757d'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    }
+                },
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Animate counters on page load
+        function animateCounters() {
+            const counters = document.querySelectorAll('.h5');
+            counters.forEach(counter => {
+                counter.classList.add('counter');
+            });
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            animateCounters();
+        });
+
+        // Auto-refresh data every 30 seconds (optional)
+        setInterval(function() {
+            // You can add AJAX calls here to refresh dashboard data
+            console.log('Dashboard data refresh...');
+        }, 30000);
+    </script>
+}

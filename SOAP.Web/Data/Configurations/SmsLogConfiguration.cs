@@ -91,7 +91,7 @@ namespace SOAP.Web.Data.Configurations
             // Retry processing index
             builder.HasIndex(s => new { s.Status, s.NextRetryAt })
                 .HasDatabaseName("IX_SmsLogs_Status_NextRetry")
-                .HasFilter("Status = 'Failed' AND NextRetryAt IS NOT NULL AND RetryCount < MaxRetries");
+                .HasFilter("Status = 'Failed' AND NextRetryAt IS NOT NULL");
             
             // Cost tracking index
             builder.HasIndex(s => new { s.Status, s.CreatedAt, s.Cost })

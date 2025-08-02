@@ -39,6 +39,9 @@ namespace SOAP.Web.Models.Entities
         [StringLength(20)]
         public string VerificationStatus { get; set; } = "Pending";
 
+        [StringLength(20)]
+        public string UploadStatus { get; set; } = "Pending";
+
         [StringLength(450)]
         public string? VerifiedBy { get; set; }
 
@@ -61,6 +64,8 @@ namespace SOAP.Web.Models.Entities
         public DateTimeOffset UploadedAt { get; set; } = DateTimeOffset.UtcNow;
 
         public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Legacy property for backward compatibility
         public string? AdminFeedback { get; set; }

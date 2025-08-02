@@ -1,0 +1,206 @@
+@{
+    ViewData["Title"] = "Help & FAQ - SOAP";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 mb-3">Help & FAQ</h1>
+                <p class="lead text-muted">Find answers to common questions about the SOAP admission process</p>
+            </div>
+
+            <!-- Quick Help -->
+            <div class="row mb-5">
+                <div class="col-md-4 mb-3">
+                    <div class="card border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-phone fa-2x text-primary mb-3"></i>
+                            <h5>Call Support</h5>
+                            <p class="text-muted">0700-XXX-XXX</p>
+                            <small>Mon-Fri: 8AM-5PM</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <i class="fas fa-sms fa-2x text-success mb-3"></i>
+                            <h5>SMS Help</h5>
+                            <p class="text-muted">Send SMS to 40404</p>
+                            <small>Text "HELP" for assistance</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <i class="fas fa-school fa-2x text-info mb-3"></i>
+                            <h5>Visit School</h5>
+                            <p class="text-muted">School Office</p>
+                            <small>For technical assistance</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq1">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                            <i class="fas fa-question-circle me-2"></i>
+                            What is my KCPE Index Number and where can I find it?
+                        </button>
+                    </h2>
+                    <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Your KCPE Index Number is an 11-digit number found on your KCPE result slip. It uniquely identifies your KCPE examination record. If you can't find it, contact your primary school or the school you've been placed in.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                            <i class="fas fa-question-circle me-2"></i>
+                            What documents do I need to upload?
+                        </button>
+                    </h2>
+                    <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You need to upload:
+                            <ul class="mt-2">
+                                <li><strong>KCPE Result Slip</strong> - Clear photo or scan</li>
+                                <li><strong>Birth Certificate</strong> - Official copy</li>
+                                <li><strong>Medical Form</strong> - Completed by a qualified medical practitioner</li>
+                            </ul>
+                            All documents should be in PDF or JPEG format, maximum 2MB each.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                            <i class="fas fa-question-circle me-2"></i>
+                            My KCPE Index Number is not found. What should I do?
+                        </button>
+                    </h2>
+                    <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            If your KCPE Index Number is not found, try these steps:
+                            <ol>
+                                <li><strong>Check if your school has uploaded placement data</strong> - Look for the "Ready" badge on the school selection page</li>
+                                <li><strong>Verify your KCPE Index Number</strong> - Double-check all 11 digits are correct</li>
+                                <li><strong>Contact your school directly</strong> - They may need to upload or update their placement list</li>
+                                <li><strong>Use manual entry option</strong> - Your application will be flagged for admin review</li>
+                                <li><strong>Visit the school office</strong> with your KCPE result slip if the issue persists</li>
+                            </ol>
+                            <div class="alert alert-info mt-3">
+                                <strong>Important:</strong> Schools must upload their Ministry placement lists before parents can verify KCPE numbers. If your school shows "Pending" status, contact them to upload the data.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Can I complete the application using SMS?
+                        </button>
+                    </h2>
+                    <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes! If you have limited internet access, you can complete basic information via SMS:
+                            <ol>
+                                <li>Send your KCPE Index Number to <strong>40404</strong></li>
+                                <li>Follow the step-by-step prompts</li>
+                                <li>Complete each section as requested</li>
+                            </ol>
+                            For document uploads, you'll need to visit a cyber cafe or the school office.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5">
+                            <i class="fas fa-question-circle me-2"></i>
+                            How will I know when my application is approved?
+                        </button>
+                    </h2>
+                    <div id="collapse5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You'll receive SMS notifications at every step:
+                            <ul class="mt-2">
+                                <li>When your application is received</li>
+                                <li>When documents are being reviewed</li>
+                                <li>If any documents need correction</li>
+                                <li>When your application is approved</li>
+                                <li>When your admission slip is ready</li>
+                            </ul>
+                            You can also log in anytime to check your application status.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6">
+                            <i class="fas fa-question-circle me-2"></i>
+                            What happens on reporting day?
+                        </button>
+                    </h2>
+                    <div id="collapse6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            If your application is approved:
+                            <ol>
+                                <li>You'll receive a digital admission slip with a verification code</li>
+                                <li>Present this code at school on reporting day</li>
+                                <li>School staff will verify your code instantly</li>
+                                <li>You'll be checked in quickly without long queues</li>
+                            </ol>
+                            If you lose your admission slip, you can retrieve it using your phone number.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faq7">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Is my information secure?
+                        </button>
+                    </h2>
+                    <div id="collapse7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, your information is completely secure:
+                            <ul class="mt-2">
+                                <li>All data is encrypted during transmission</li>
+                                <li>Documents are stored securely</li>
+                                <li>Only authorized school staff can access your information</li>
+                                <li>We comply with Kenya Data Protection Act</li>
+                                <li>Your phone number is verified via OTP</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <h3 class="h4 mb-3">Still Need Help?</h3>
+                <p class="mb-4">Our support team is here to assist you</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="tel:0700000000" class="btn btn-primary">
+                        <i class="fas fa-phone me-2"></i>Call Support
+                    </a>
+                    <a href="@Url.Action("Index", "Admission")" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Application
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

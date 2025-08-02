@@ -199,7 +199,7 @@ namespace SOAP.Web.Services
         {
             try
             {
-                await _auditService.LogSecurityEventAsync(new SecurityEvent
+                await _auditService.LogSecurityEventAsync(new Services.Interfaces.SecurityEvent
                 {
                     EventType = eventType,
                     Success = success,

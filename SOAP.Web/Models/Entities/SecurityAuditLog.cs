@@ -2,39 +2,48 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SOAP.Web.Models.Entities
 {
+    /// <summary>
+    /// Security audit log for tracking all security-related events
+    /// Complies with Kenya Data Protection Act requirements for audit trails
+    /// </summary>
     public class SecurityAuditLog
     {
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string EventType { get; set; } = "";
+        [MaxLength(50)]
+        public string EventType { get; set; } = string.Empty; // LOGIN_SUCCESS, LOGIN_FAILURE, DATA_ACCESS, etc.
 
-        [StringLength(100)]
-        public string UserId { get; set; } = "";
+        [MaxLength(450)]
+        public string? UserId { get; set; } // User ID if authenticated
 
-        [StringLength(20)]
-        public string UserRole { get; set; } = "";
+        [MaxLength(50)]
+        public string? UserRole { get; set; } // Parent, Admin
 
-        [StringLength(45)]
-        public string IpAddress { get; set; } = "";
+        [MaxLength(45)] // IPv6 support
+        public string? IpAddress { get; set; }
 
-        [StringLength(500)]
-        public string UserAgent { get; set; } = "";
+        [MaxLength(500)]
+        public string? UserAgent { get; set; }
 
-        [StringLength(200)]
-        public string ResourceAccessed { get; set; } = "";
+        [MaxLength(200)]
+        public string? ResourceAccessed { get; set; } // Controller/Action or Entity name
 
-        [StringLength(200)]
-        public string ActionPerformed { get; set; } = "";
+        [MaxLength(100)]
+        public string? ActionPerformed { get; set; } // CREATE, READ, UPDATE, DELETE
 
         public bool Success { get; set; }
 
-        [StringLength(500)]
-        public string FailureReason { get; set; } = "";
+        [MaxLength(500)]
+        public string? FailureReason { get; set; }
 
-        public string AdditionalData { get; set; } = "";
+        public string? Details { get; set; } // Detailed description of the event
+
+        public string? AdditionalData { get; set; } // JSON data for additional context
 
         public DateTimeOffset Timestamp { get; set; } = DateTimeOffset.UtcNow;
+
+        // Note: UserId is stored as string for flexibility
+        // No direct navigation property due to type mismatch with User.Id (int)
     }
 }

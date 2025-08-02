@@ -1,0 +1,34 @@
+[
+  {
+    "ContainingType": "SOAP.Web.Controllers.ApiController",
+    "Method": "SendOtp",
+    "RelativePath": "api/Api/send-otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "phoneNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SOAP.Web.Controllers.ApiController",
+    "Method": "VerifyKcpeNumber",
+    "RelativePath": "api/Api/verify-kcpe",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "kcpeNumber",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

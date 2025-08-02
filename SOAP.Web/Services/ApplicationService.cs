@@ -84,7 +84,7 @@ namespace SOAP.Web.Services
             application.HomeAddress = applicationDto.HomeAddress;
             application.BoardingStatus = applicationDto.BoardingStatus;
             application.MedicalConditions = applicationDto.MedicalConditions;
-            application.UpdatedAt = DateTime.Now;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
 
             await _context.SaveChangesAsync();
             return MapToDto(application);
@@ -215,13 +215,13 @@ namespace SOAP.Web.Services
                     Id = d.Id,
                     ApplicationId = d.ApplicationId,
                     DocumentType = d.DocumentType,
-                    FileName = d.FileName,
+                    FileName = d.OriginalFileName,
                     FilePath = d.FilePath,
                     FileSize = d.FileSize,
                     ContentType = d.ContentType,
-                    UploadStatus = d.UploadStatus,
+                    UploadStatus = d.VerificationStatus,
                     AdminFeedback = d.AdminFeedback,
-                    CreatedAt = d.CreatedAt
+                    CreatedAt = d.UploadedAt
                 }).ToList() ?? new List<DocumentDto>()
             };
         }
@@ -334,7 +334,7 @@ namespace SOAP.Web.Services
         {
             try
             {
-                await _auditService.LogSecurityEventAsync(new SecurityEvent
+                await _auditService.LogSecurityEventAsync(new Services.Interfaces.SecurityEvent
                 {
                     EventType = eventType,
                     Success = success,

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SOAP.Web.Models.Entities;
+using SOAP.Web.Utilities.Constants;
 
 namespace SOAP.Web.Data.Seeds
 {
@@ -9,24 +10,24 @@ namespace SOAP.Web.Data.Seeds
         {
             // Ensure database is created
             await context.Database.EnsureCreatedAsync();
-            
+
             // Seed Schools
             await SeedSchoolsAsync(context);
-            
-            // Seed Users
-            await SeedUsersAsync(context);
-            
-            // Seed Sample Students (for testing)
+
+            // Seed Sample School Students (for testing)
             await SeedSchoolStudentsAsync(context);
-            
+
+            // Seed Default Admin User
+            await SeedDefaultAdminAsync(context);
+
             await context.SaveChangesAsync();
         }
-        
+
         private static async Task SeedSchoolsAsync(ApplicationDbContext context)
         {
             if (await context.Schools.AnyAsync())
                 return;
-            
+
             var schools = new List<School>
             {
                 new School
@@ -35,7 +36,7 @@ namespace SOAP.Web.Data.Seeds
                     Code = "AHS001",
                     County = "Kiambu",
                     ContactPhone = "0722123456",
-                    ContactEmail = "info@alliance.ac.ke",
+                    ContactEmail = "admin@alliance.ac.ke",
                     IsActive = true
                 },
                 new School
@@ -44,7 +45,7 @@ namespace SOAP.Web.Data.Seeds
                     Code = "SBC002",
                     County = "Nairobi",
                     ContactPhone = "0733234567",
-                    ContactEmail = "info@starehe.ac.ke",
+                    ContactEmail = "admin@starehe.ac.ke",
                     IsActive = true
                 },
                 new School
@@ -53,115 +54,89 @@ namespace SOAP.Web.Data.Seeds
                     Code = "KHS003",
                     County = "Nairobi",
                     ContactPhone = "0744345678",
-                    ContactEmail = "info@kenyahigh.ac.ke",
-                    IsActive = true
-                },
-                new School
-                {
-                    Name = "Mang'u High School",
-                    Code = "MHS004",
-                    County = "Kiambu",
-                    ContactPhone = "0755456789",
-                    ContactEmail = "info@mangu.ac.ke",
-                    IsActive = true
-                },
-                new School
-                {
-                    Name = "Loreto High School Limuru",
-                    Code = "LHL005",
-                    County = "Kiambu",
-                    ContactPhone = "0766567890",
-                    ContactEmail = "info@loretolimuru.ac.ke",
+                    ContactEmail = "admin@kenyahigh.ac.ke",
                     IsActive = true
                 }
             };
-            
+
             await context.Schools.AddRangeAsync(schools);
         }
-        
-        private static async Task SeedUsersAsync(ApplicationDbContext context)
-        {
-            if (await context.Users.AnyAsync())
-                return;
-            
-            var schools = await context.Schools.ToListAsync();
-            var users = new List<User>();
-            
-            // Create admin users for each school
-            foreach (var school in schools)
-            {
-                users.Add(new User
-                {
-                    PhoneNumber = $"07{Random.Shared.Next(10000000, 99999999)}",
-                    Role = "Admin",
-                    SchoolId = school.Id,
-                    IsActive = true
-                });
-            }
-            
-            // Create a super admin
-            users.Add(new User
-            {
-                PhoneNumber = "0700000000",
-                Role = "SuperAdmin",
-                SchoolId = null,
-                IsActive = true
-            });
-            
-            await context.Users.AddRangeAsync(users);
-        }
-        
+
         private static async Task SeedSchoolStudentsAsync(ApplicationDbContext context)
         {
             if (await context.SchoolStudents.AnyAsync())
                 return;
-            
-            var schools = await context.Schools.ToListAsync();
-            var students = new List<SchoolStudent>();
-            var currentYear = DateTime.Now.Year;
-            
-            foreach (var school in schools)
+
+            var allianceSchool = await context.Schools.FirstOrDefaultAsync(s => s.Code == "AHS001");
+            if (allianceSchool == null) return;
+
+            var schoolStudents = new List<SchoolStudent>
             {
-                // Generate 50 sample students per school
-                for (int i = 1; i <= 50; i++)
+                new SchoolStudent
                 {
-                    var kcpeNumber = $"{currentYear}{school.Code.Substring(0, 3)}{i:D5}";
-                    
-                    students.Add(new SchoolStudent
-                    {
-                        KcpeIndexNumber = kcpeNumber,
-                        StudentName = GenerateRandomName(),
-                        KcpeScore = Random.Shared.Next(250, 500),
-                        SchoolId = school.Id,
-                        Year = currentYear,
-                        HasApplied = false
-                    });
+                    KcpeIndexNumber = "12345678901",
+                    StudentName = "John Doe Mwangi",
+                    KcpeScore = 350,
+                    SchoolId = allianceSchool.Id,
+                    Year = DateTime.Now.Year,
+                    HasApplied = false
+                },
+                new SchoolStudent
+                {
+                    KcpeIndexNumber = "12345678902",
+                    StudentName = "Mary Wanjiku Kamau",
+                    KcpeScore = 380,
+                    SchoolId = allianceSchool.Id,
+                    Year = DateTime.Now.Year,
+                    HasApplied = false
+                },
+                new SchoolStudent
+                {
+                    KcpeIndexNumber = "12345678903",
+                    StudentName = "Peter Kiprotich Koech",
+                    KcpeScore = 365,
+                    SchoolId = allianceSchool.Id,
+                    Year = DateTime.Now.Year,
+                    HasApplied = false
                 }
-            }
-            
-            await context.SchoolStudents.AddRangeAsync(students);
+            };
+
+            await context.SchoolStudents.AddRangeAsync(schoolStudents);
         }
-        
-        private static string GenerateRandomName()
+
+        private static async Task SeedDefaultAdminAsync(ApplicationDbContext context)
         {
-            var firstNames = new[]
+            if (await context.Users.AnyAsync())
+                return;
+
+            var allianceSchool = await context.Schools.FirstOrDefaultAsync(s => s.Code == "AHS001");
+            if (allianceSchool == null) return;
+
+            var defaultAdmin = new User
             {
-                "John", "Mary", "Peter", "Grace", "David", "Faith", "James", "Joyce",
-                "Michael", "Catherine", "Daniel", "Margaret", "Joseph", "Elizabeth",
-                "Samuel", "Rose", "Benjamin", "Sarah", "Emmanuel", "Ruth"
+                PhoneNumber = "0722000000", // Default admin phone
+                Role = UserRoles.SchoolAdmin,
+                SchoolId = allianceSchool.Id,
+                IsActive = true,
+                CreatedAt = DateTimeOffset.UtcNow,
+                UpdatedAt = DateTimeOffset.UtcNow
             };
-            
-            var lastNames = new[]
+
+            await context.Users.AddAsync(defaultAdmin);
+
+            // Create initial consent record for the admin
+            var consent = new DataProcessingConsent
             {
-                "Mwangi", "Wanjiku", "Kamau", "Njeri", "Kiprotich", "Chebet",
-                "Ochieng", "Akinyi", "Maina", "Wambui", "Kiplagat", "Jepkoech",
-                "Otieno", "Awino", "Mutua", "Muthoni", "Kiptoo", "Chepkemoi"
+                UserId = defaultAdmin.Id.ToString(),
+                ConsentType = "SYSTEM_ADMIN",
+                Purpose = "System administration and school management",
+                ConsentGiven = true,
+                ConsentVersion = "1.0",
+                ConsentDate = DateTimeOffset.UtcNow,
+                IsActive = true
             };
-            
-            var firstName = firstNames[Random.Shared.Next(firstNames.Length)];
-            var lastName = lastNames[Random.Shared.Next(lastNames.Length)];
-            
-            return $"{firstName} {lastName}";
+
+            await context.DataProcessingConsents.AddAsync(consent);
         }
     }
 }

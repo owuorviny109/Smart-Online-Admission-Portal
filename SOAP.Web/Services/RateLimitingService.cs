@@ -38,8 +38,8 @@ namespace SOAP.Web.Services
             return await IsRequestAllowedAsync(
                 phoneNumber, 
                 "login", 
-                _securityConfig.RateLimiting.LoginMaxRequests, 
-                TimeSpan.FromMinutes(_securityConfig.RateLimiting.LoginWindowMinutes));
+                _securityConfig.RateLimit.Login.MaxAttempts, 
+                TimeSpan.FromMinutes(_securityConfig.RateLimit.Login.WindowMinutes));
         }
 
         public async Task<bool> IsOtpRequestAllowedAsync(string phoneNumber)
@@ -47,8 +47,8 @@ namespace SOAP.Web.Services
             return await IsRequestAllowedAsync(
                 phoneNumber, 
                 "otp", 
-                _securityConfig.RateLimiting.OtpMaxRequests, 
-                TimeSpan.FromMinutes(_securityConfig.RateLimiting.OtpWindowMinutes));
+                _securityConfig.RateLimit.Otp.MaxRequests, 
+                TimeSpan.FromMinutes(_securityConfig.RateLimit.Otp.WindowMinutes));
         }
 
         public async Task<bool> IsUploadAllowedAsync(string userId)
@@ -56,8 +56,8 @@ namespace SOAP.Web.Services
             return await IsRequestAllowedAsync(
                 userId, 
                 "upload", 
-                _securityConfig.RateLimiting.UploadMaxRequests, 
-                TimeSpan.FromMinutes(_securityConfig.RateLimiting.UploadWindowMinutes));
+                _securityConfig.RateLimit.FileUpload.MaxUploads, 
+                TimeSpan.FromMinutes(_securityConfig.RateLimit.FileUpload.WindowMinutes));
         }
 
         public async Task IncrementRequestCountAsync(string clientId, string endpoint)
@@ -89,9 +89,9 @@ namespace SOAP.Web.Services
         {
             return endpoint switch
             {
-                "login" => TimeSpan.FromMinutes(_securityConfig.RateLimiting.LoginWindowMinutes),
-                "otp" => TimeSpan.FromMinutes(_securityConfig.RateLimiting.OtpWindowMinutes),
-                "upload" => TimeSpan.FromMinutes(_securityConfig.RateLimiting.UploadWindowMinutes),
+                "login" => TimeSpan.FromMinutes(_securityConfig.RateLimit.Login.WindowMinutes),
+                "otp" => TimeSpan.FromMinutes(_securityConfig.RateLimit.Otp.WindowMinutes),
+                "upload" => TimeSpan.FromMinutes(_securityConfig.RateLimit.FileUpload.WindowMinutes),
                 _ => TimeSpan.FromMinutes(1)
             };
         }

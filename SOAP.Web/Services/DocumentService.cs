@@ -54,11 +54,11 @@ namespace SOAP.Web.Services
             {
                 ApplicationId = applicationId,
                 DocumentType = documentType,
-                FileName = file.FileName,
+                OriginalFileName = file.FileName,
                 FilePath = Path.Combine("uploads", "documents", fileName),
                 FileSize = file.Length,
                 ContentType = file.ContentType,
-                UploadStatus = "Uploaded"
+                VerificationStatus = "Pending"
             };
 
             _context.Documents.Add(document);
@@ -89,7 +89,7 @@ namespace SOAP.Web.Services
             var document = await _context.Documents.FindAsync(id);
             if (document == null) return false;
 
-            document.UploadStatus = status;
+            document.VerificationStatus = status;
             document.AdminFeedback = feedback;
 
             await _context.SaveChangesAsync();
@@ -129,13 +129,13 @@ namespace SOAP.Web.Services
                 Id = document.Id,
                 ApplicationId = document.ApplicationId,
                 DocumentType = document.DocumentType,
-                FileName = document.FileName,
+                FileName = document.OriginalFileName,
                 FilePath = document.FilePath,
                 FileSize = document.FileSize,
                 ContentType = document.ContentType,
-                UploadStatus = document.UploadStatus,
+                UploadStatus = document.VerificationStatus,
                 AdminFeedback = document.AdminFeedback,
-                CreatedAt = document.CreatedAt
+                CreatedAt = document.UploadedAt
             };
         }
     }

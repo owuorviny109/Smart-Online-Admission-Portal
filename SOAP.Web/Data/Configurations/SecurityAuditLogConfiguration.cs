@@ -8,75 +8,56 @@ namespace SOAP.Web.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<SecurityAuditLog> builder)
         {
+            builder.ToTable("SecurityAuditLogs");
+
             builder.HasKey(e => e.Id);
-            
-            // Required fields with security-focused constraints
+
             builder.Property(e => e.EventType)
                 .IsRequired()
-                .HasMaxLength(50)
-                .HasComment("Type of security event (LOGIN, LOGOUT, DATA_ACCESS, etc.)");
-            
+                .HasMaxLength(50);
+
             builder.Property(e => e.UserId)
-                .HasMaxLength(450)
-                .HasComment("User identifier for the event");
-            
+                .HasMaxLength(450);
+
             builder.Property(e => e.UserRole)
-                .HasMaxLength(50)
-                .HasComment("User role at time of event");
-            
+                .HasMaxLength(50);
+
             builder.Property(e => e.IpAddress)
-                .HasMaxLength(45) // IPv6 support
-                .HasComment("Client IP address");
-            
+                .HasMaxLength(45); // IPv6 support
+
             builder.Property(e => e.UserAgent)
-                .HasMaxLength(500)
-                .HasComment("Client user agent string");
-            
+                .HasMaxLength(500);
+
             builder.Property(e => e.ResourceAccessed)
-                .HasMaxLength(200)
-                .HasComment("Resource or endpoint accessed");
-            
+                .HasMaxLength(200);
+
             builder.Property(e => e.ActionPerformed)
-                .HasMaxLength(100)
-                .HasComment("Action performed on the resource");
-            
-            builder.Property(e => e.Success)
-                .IsRequired()
-                .HasComment("Whether the action was successful");
-            
+                .HasMaxLength(100);
+
             builder.Property(e => e.FailureReason)
-                .HasMaxLength(500)
-                .HasComment("Reason for failure if applicable");
-            
+                .HasMaxLength(500);
+
             builder.Property(e => e.AdditionalData)
-                .HasColumnType("nvarchar(max)")
-                .HasComment("JSON data with additional context");
-            
+                .HasColumnType("nvarchar(max)");
+
             builder.Property(e => e.Timestamp)
-                .IsRequired()
-                .HasDefaultValueSql("GETUTCDATE()")
-                .HasComment("UTC timestamp of the event");
-            
-            // Security-focused indexes for fast querying
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            // Indexes for performance
             builder.HasIndex(e => new { e.EventType, e.Timestamp })
-                .HasDatabaseName("IX_SecurityAuditLogs_EventType_Timestamp")
-                .HasFilter("EventType IS NOT NULL");
-            
+                .HasDatabaseName("IX_SecurityAuditLogs_EventType_Timestamp");
+
             builder.HasIndex(e => new { e.UserId, e.Timestamp })
-                .HasDatabaseName("IX_SecurityAuditLogs_UserId_Timestamp")
-                .HasFilter("UserId IS NOT NULL");
-            
+                .HasDatabaseName("IX_SecurityAuditLogs_UserId_Timestamp");
+
             builder.HasIndex(e => new { e.IpAddress, e.Timestamp })
-                .HasDatabaseName("IX_SecurityAuditLogs_IpAddress_Timestamp")
-                .HasFilter("IpAddress IS NOT NULL");
-            
-            builder.HasIndex(e => new { e.Success, e.EventType, e.Timestamp })
-                .HasDatabaseName("IX_SecurityAuditLogs_Success_EventType_Timestamp");
-            
-            // Index for security monitoring queries
-            builder.HasIndex(e => new { e.EventType, e.Success, e.IpAddress, e.Timestamp })
-                .HasDatabaseName("IX_SecurityAuditLogs_Monitoring")
-                .HasFilter("EventType IN ('LOGIN_FAILED', 'UNAUTHORIZED_ACCESS', 'SUSPICIOUS_ACTIVITY')");
+                .HasDatabaseName("IX_SecurityAuditLogs_IpAddress_Timestamp");
+
+            builder.HasIndex(e => e.Success)
+                .HasDatabaseName("IX_SecurityAuditLogs_Success");
+
+            // Note: UserId is stored as string for flexibility (can store User.Id.ToString() or external IDs)
+            // No direct foreign key relationship to User table due to type mismatch
         }
     }
 }

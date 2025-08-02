@@ -46,9 +46,16 @@ namespace SOAP.Web.Authorization
                 return;
             }
 
+            // Parse userId to int
+            if (!int.TryParse(userId, out var userIdInt))
+            {
+                context.Fail();
+                return;
+            }
+
             // Get user's school ID
             var user = await _context.Users
-                .Where(u => u.Id == userId)
+                .Where(u => u.Id == userIdInt)
                 .Select(u => u.SchoolId)
                 .FirstOrDefaultAsync();
 

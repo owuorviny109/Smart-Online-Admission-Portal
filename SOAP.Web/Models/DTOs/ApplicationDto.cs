@@ -16,8 +16,8 @@ namespace SOAP.Web.Models.DTOs
         public string Status { get; set; }
         public string? AdmissionCode { get; set; }
         public bool CheckedIn { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
         
         public SchoolDto School { get; set; }
         public List<DocumentDto> Documents { get; set; } = new List<DocumentDto>();

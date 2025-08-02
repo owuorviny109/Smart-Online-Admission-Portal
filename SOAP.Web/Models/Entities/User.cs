@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SOAP.Web.Utilities.Constants;
 
 namespace SOAP.Web.Models.Entities
 {
@@ -12,7 +13,7 @@ namespace SOAP.Web.Models.Entities
 
         [Required]
         [StringLength(20)]
-        public string Role { get; set; } = ""; // Parent, SchoolAdmin, SuperAdmin
+        public string Role { get; set; } = UserRoles.Parent; // Default to Parent for security
 
         public int? SchoolId { get; set; }
 
@@ -37,5 +38,50 @@ namespace SOAP.Web.Models.Entities
 
         // Navigation properties
         public virtual School? School { get; set; }
+
+        /// <summary>
+        /// SECURITY: Validates if this user can have Platform Admin role
+        /// Only the system owner's phone number can be Platform Admin
+        /// </summary>
+        public bool CanBePlatformAdmin()
+        {
+            return UserRoles.CanBePlatformAdmin(PhoneNumber);
+        }
+
+        /// <summary>
+        /// SECURITY: Validates if role assignment is legitimate
+        /// </summary>
+        public bool IsValidRoleAssignment()
+        {
+            // Check if role is valid
+            if (!UserRoles.IsValidRole(Role))
+                return false;
+
+            // Platform Admin can only be assigned to system owner
+            if (Role == UserRoles.PlatformAdmin)
+                return CanBePlatformAdmin();
+
+            // School Admin must have a school
+            if (Role == UserRoles.SchoolAdmin)
+                return SchoolId.HasValue;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Gets user-friendly role display name
+        /// </summary>
+        public string GetRoleDisplayName()
+        {
+            return UserRoles.GetRoleDisplayName(Role);
+        }
+
+        /// <summary>
+        /// Checks if user can access admin areas
+        /// </summary>
+        public bool CanAccessAdmin()
+        {
+            return UserRoles.CanAccessAdmin(Role);
+        }
     }
 }

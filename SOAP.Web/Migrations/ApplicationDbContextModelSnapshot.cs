@@ -32,58 +32,77 @@ namespace SOAP.Web.Migrations
 
                     b.Property<string>("AdmissionCode")
                         .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(10)")
+                        .HasComment("Unique admission code for approved applications");
 
                     b.Property<string>("BoardingStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Day");
+                        .HasDefaultValue("Day")
+                        .HasComment("Boarding or Day scholar preference");
 
                     b.Property<bool>("CheckedIn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(false)
+                        .HasComment("Whether student has physically checked in");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Application creation timestamp");
 
                     b.Property<string>("EmergencyContact")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasComment("Encrypted emergency contact phone");
 
                     b.Property<string>("EmergencyName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Emergency contact name");
 
                     b.Property<string>("HomeAddress")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
                         .HasComment("Encrypted personal data");
 
                     b.Property<string>("KcpeIndexNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasComment("KCPE index number for student verification");
 
                     b.Property<string>("MedicalConditions")
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
                         .HasComment("Encrypted personal data");
 
                     b.Property<string>("ParentName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Parent/guardian full name");
 
                     b.Property<string>("ParentPhone")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)")
                         .HasComment("Encrypted personal data");
+
+                    b.Property<DateTimeOffset?>("ReviewedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When application was reviewed by admin");
+
+                    b.Property<string>("ReviewedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Admin user who reviewed the application");
 
                     b.Property<int>("SchoolId")
                         .HasColumnType("int");
@@ -93,7 +112,8 @@ namespace SOAP.Web.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("Pending");
+                        .HasDefaultValue("Pending")
+                        .HasComment("Application status (Pending, Approved, Rejected)");
 
                     b.Property<int>("StudentAge")
                         .HasColumnType("int");
@@ -101,21 +121,38 @@ namespace SOAP.Web.Migrations
                     b.Property<string>("StudentName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Student full name");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTimeOffset?>("SubmittedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When application was submitted for review");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Last update timestamp");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Applications_CreatedAt");
 
                     b.HasIndex("KcpeIndexNumber")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_Applications_KcpeNumber");
 
-                    b.HasIndex("SchoolId", "Status");
+                    b.HasIndex("ReviewedBy")
+                        .HasDatabaseName("IX_Applications_ReviewedBy")
+                        .HasFilter("ReviewedBy IS NOT NULL");
+
+                    b.HasIndex("ParentPhone", "SchoolId")
+                        .HasDatabaseName("IX_Applications_ParentPhone_School")
+                        .HasFilter("ParentPhone IS NOT NULL");
+
+                    b.HasIndex("SchoolId", "Status")
+                        .HasDatabaseName("IX_Applications_School_Status");
 
                     b.HasIndex("Status", "UpdatedAt")
                         .HasDatabaseName("IX_Applications_Status_Updated");
@@ -137,9 +174,6 @@ namespace SOAP.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("CanWithdraw")
-                        .HasColumnType("bit");
-
                     b.Property<DateTimeOffset>("ConsentDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetimeoffset")
@@ -159,9 +193,11 @@ namespace SOAP.Web.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("IpAddress")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Purpose")
                         .IsRequired()
@@ -169,7 +205,6 @@ namespace SOAP.Web.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("UserAgent")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -178,12 +213,21 @@ namespace SOAP.Web.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<DateTimeOffset?>("WithdrawnDate")
+                        .HasColumnType("datetimeoffset");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ConsentDate")
+                        .HasDatabaseName("IX_DataProcessingConsents_ConsentDate");
+
+                    b.HasIndex("ConsentType", "IsActive")
+                        .HasDatabaseName("IX_DataProcessingConsents_Type_Active");
 
                     b.HasIndex("UserId", "ConsentType")
                         .HasDatabaseName("IX_DataProcessingConsents_User_Type");
 
-                    b.ToTable("DataProcessingConsents");
+                    b.ToTable("DataProcessingConsents", (string)null);
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.Document", b =>
@@ -194,6 +238,14 @@ namespace SOAP.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AccessLevel")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Private")
+                        .HasComment("Access level (Private, SchoolAdmin, Public)");
+
                     b.Property<string>("AdminFeedback")
                         .HasColumnType("nvarchar(max)");
 
@@ -203,20 +255,27 @@ namespace SOAP.Web.Migrations
                     b.Property<string>("ContentType")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("MIME type of the document");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("DocumentType")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("Type of document (BIRTH_CERT, KCPE_CERT, etc.)");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("EncryptionKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Encryption key reference for sensitive documents");
+
+                    b.Property<string>("FileHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasComment("SHA-256 hash of file content for integrity verification");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
@@ -224,17 +283,92 @@ namespace SOAP.Web.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<long>("FileSize")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasComment("File size in bytes");
+
+                    b.Property<bool>("IsVirusScanPassed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasComment("Whether document passed virus scan");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasComment("Original filename as uploaded by user");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasComment("Reason for document rejection");
+
+                    b.Property<string>("SecureFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasComment("Secure filename used for storage");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Last update timestamp");
 
                     b.Property<string>("UploadStatus")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<DateTimeOffset>("UploadedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("When document was uploaded");
+
+                    b.Property<string>("VerificationStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Pending")
+                        .HasComment("Document verification status (Pending, Verified, Rejected)");
+
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When document was verified");
+
+                    b.Property<string>("VerifiedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Admin user who verified the document");
+
+                    b.Property<DateTimeOffset?>("VirusScanDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When virus scan was performed");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FileHash")
+                        .HasDatabaseName("IX_Documents_FileHash")
+                        .HasFilter("FileHash IS NOT NULL");
+
+                    b.HasIndex("VerifiedBy")
+                        .HasDatabaseName("IX_Documents_VerifiedBy")
+                        .HasFilter("VerifiedBy IS NOT NULL");
 
                     b.HasIndex("ApplicationId", "DocumentType")
                         .HasDatabaseName("IX_Documents_Application_Type");
+
+                    b.HasIndex("IsVirusScanPassed", "VirusScanDate")
+                        .HasDatabaseName("IX_Documents_VirusScan")
+                        .HasFilter("IsVirusScanPassed = 0");
+
+                    b.HasIndex("VerificationStatus", "UploadedAt")
+                        .HasDatabaseName("IX_Documents_Status_Uploaded");
+
+                    b.HasIndex("ApplicationId", "AccessLevel", "UploadedAt")
+                        .HasDatabaseName("IX_Documents_Application_Access_Date");
 
                     b.ToTable("Documents", t =>
                         {
@@ -256,14 +390,22 @@ namespace SOAP.Web.Migrations
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("FailureReason")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("IpAddress")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("OtpCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTimeOffset?>("OtpExpiresAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("OtpUsed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -274,11 +416,15 @@ namespace SOAP.Web.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserAgent")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("IpAddress", "AttemptedAt")
                         .HasDatabaseName("IX_LoginAttempts_IP_Date");
@@ -289,7 +435,10 @@ namespace SOAP.Web.Migrations
                     b.HasIndex("Success", "AttemptedAt")
                         .HasDatabaseName("IX_LoginAttempts_Success_Date");
 
-                    b.ToTable("LoginAttempts");
+                    b.HasIndex("PhoneNumber", "Success", "AttemptedAt")
+                        .HasDatabaseName("IX_LoginAttempts_Phone_Success_Date");
+
+                    b.ToTable("LoginAttempts", (string)null);
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.School", b =>
@@ -337,6 +486,9 @@ namespace SOAP.Web.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code")
@@ -358,8 +510,11 @@ namespace SOAP.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Record creation timestamp");
 
                     b.Property<bool>("HasApplied")
                         .HasColumnType("bit");
@@ -367,10 +522,20 @@ namespace SOAP.Web.Migrations
                     b.Property<string>("KcpeIndexNumber")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasComment("KCPE index number for student identification");
 
-                    b.Property<int?>("KcpeScore")
-                        .HasColumnType("int");
+                    b.Property<int>("KcpeScore")
+                        .HasColumnType("int")
+                        .HasComment("KCPE total score");
+
+                    b.Property<string>("PlacementStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Placed")
+                        .HasComment("Student placement status (Placed, NotPlaced, Transferred)");
 
                     b.Property<int>("SchoolId")
                         .HasColumnType("int");
@@ -378,20 +543,32 @@ namespace SOAP.Web.Migrations
                     b.Property<string>("StudentName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Student full name from KCPE records");
 
                     b.Property<int>("Year")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("KCPE examination year");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SchoolId");
+                    b.HasIndex("KcpeScore")
+                        .HasDatabaseName("IX_SchoolStudents_Score");
+
+                    b.HasIndex("SchoolId", "PlacementStatus")
+                        .HasDatabaseName("IX_SchoolStudents_School_Status");
+
+                    b.HasIndex("SchoolId", "Year")
+                        .HasDatabaseName("IX_SchoolStudents_School_Year");
 
                     b.HasIndex("KcpeIndexNumber", "SchoolId", "Year")
                         .IsUnique()
                         .HasDatabaseName("IX_SchoolStudents_KcpeNumber_School_Year");
 
-                    b.ToTable("SchoolStudents");
+                    b.ToTable("SchoolStudents", t =>
+                        {
+                            t.HasComment("Pre-loaded student records for KCPE verification and placement tracking");
+                        });
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.SecurityAuditLog", b =>
@@ -403,12 +580,13 @@ namespace SOAP.Web.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ActionPerformed")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("AdditionalData")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EventType")
@@ -417,17 +595,14 @@ namespace SOAP.Web.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FailureReason")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("IpAddress")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("ResourceAccessed")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -440,21 +615,21 @@ namespace SOAP.Web.Migrations
                         .HasDefaultValueSql("GETUTCDATE()");
 
                     b.Property<string>("UserAgent")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserId")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserRole")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Success")
+                        .HasDatabaseName("IX_SecurityAuditLogs_Success");
 
                     b.HasIndex("EventType", "Timestamp")
                         .HasDatabaseName("IX_SecurityAuditLogs_EventType_Timestamp");
@@ -465,7 +640,7 @@ namespace SOAP.Web.Migrations
                     b.HasIndex("UserId", "Timestamp")
                         .HasDatabaseName("IX_SecurityAuditLogs_UserId_Timestamp");
 
-                    b.ToTable("SecurityAuditLogs");
+                    b.ToTable("SecurityAuditLogs", (string)null);
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.SecurityIncidentRecord", b =>
@@ -477,13 +652,12 @@ namespace SOAP.Web.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AffectedUserId")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<bool>("AutomaticResponse")
+                    b.Property<string>("AutomaticResponse")
                         .HasMaxLength(500)
-                        .HasColumnType("bit");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -500,43 +674,45 @@ namespace SOAP.Web.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("MitigationActions")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<string>("ManualResponse")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("ResolvedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("ResolvedBy")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Severity")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                    b.Property<int>("Severity")
+                        .HasColumnType("int");
 
                     b.Property<string>("SourceIpAddress")
-                        .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Open");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AffectedUserId")
+                        .HasDatabaseName("IX_SecurityIncidents_AffectedUser");
 
                     b.HasIndex("IncidentType", "DetectedAt")
                         .HasDatabaseName("IX_SecurityIncidents_Type_Date");
 
+                    b.HasIndex("SourceIpAddress", "DetectedAt")
+                        .HasDatabaseName("IX_SecurityIncidents_IP_Date");
+
                     b.HasIndex("Status", "Severity")
                         .HasDatabaseName("IX_SecurityIncidents_Status_Severity");
 
-                    b.ToTable("SecurityIncidents");
+                    b.ToTable("SecurityIncidents", (string)null);
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.SmsLog", b =>
@@ -550,27 +726,81 @@ namespace SOAP.Web.Migrations
                     b.Property<int?>("ApplicationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal?>("Cost")
+                        .HasColumnType("decimal(10,4)")
+                        .HasComment("Cost of SMS in local currency");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("When SMS was queued");
+
+                    b.Property<DateTimeOffset?>("DeliveredAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When SMS was delivered to recipient");
+
+                    b.Property<string>("FailureReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Reason for SMS failure");
+
+                    b.Property<int>("MaxRetries")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(3)
+                        .HasComment("Maximum retry attempts allowed");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasComment("SMS message content");
 
                     b.Property<string>("MessageType")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("Type of SMS (OTP, NOTIFICATION, ALERT)");
+
+                    b.Property<DateTimeOffset?>("NextRetryAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When next retry should be attempted");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasComment("Recipient phone number");
+
+                    b.Property<string>("ProviderId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("SMS provider message ID");
+
+                    b.Property<int>("RetryCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasComment("Number of retry attempts");
+
+                    b.Property<DateTimeOffset?>("SentAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("When SMS was sent to provider");
 
                     b.Property<string>("Status")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Pending")
+                        .HasComment("SMS delivery status (Pending, Sent, Failed, Delivered)");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Last update timestamp");
 
                     b.HasKey("Id");
 
@@ -582,7 +812,24 @@ namespace SOAP.Web.Migrations
                     b.HasIndex("PhoneNumber", "CreatedAt")
                         .HasDatabaseName("IX_SmsLogs_Phone_Date");
 
-                    b.ToTable("SmsLogs");
+                    b.HasIndex("Status", "NextRetryAt")
+                        .HasDatabaseName("IX_SmsLogs_Status_NextRetry")
+                        .HasFilter("Status = 'Failed' AND NextRetryAt IS NOT NULL");
+
+                    b.HasIndex("MessageType", "Status", "CreatedAt")
+                        .HasDatabaseName("IX_SmsLogs_Type_Status_Date");
+
+                    b.HasIndex("PhoneNumber", "MessageType", "CreatedAt")
+                        .HasDatabaseName("IX_SmsLogs_Phone_Type_Date");
+
+                    b.HasIndex("Status", "CreatedAt", "Cost")
+                        .HasDatabaseName("IX_SmsLogs_Status_Date_Cost")
+                        .HasFilter("Status = 'Delivered' AND Cost IS NOT NULL");
+
+                    b.ToTable("SmsLogs", t =>
+                        {
+                            t.HasComment("SMS communication log with delivery tracking and rate limiting");
+                        });
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.User", b =>
@@ -593,21 +840,52 @@ namespace SOAP.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetimeoffset")
+                        .HasDefaultValueSql("GETUTCDATE()")
+                        .HasComment("Account creation timestamp");
+
+                    b.Property<DateTimeOffset?>("DeletionDate")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("Date when user data was anonymized/deleted");
+
+                    b.Property<string>("DeletionReason")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Reason for data deletion (GDPR compliance)");
+
+                    b.Property<int>("FailedLoginAttempts")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasComment("Number of consecutive failed login attempts");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true)
+                        .HasComment("Whether the user account is active");
+
+                    b.Property<DateTimeOffset?>("LastLoginAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("Last successful login timestamp");
+
+                    b.Property<DateTimeOffset?>("LockedUntil")
+                        .HasColumnType("datetimeoffset")
+                        .HasComment("Account lockout expiry time");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasColumnType("nvarchar(15)")
+                        .HasComment("Encrypted phone number for authentication");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(20)")
+                        .HasComment("User role (Parent, SchoolAdmin, SuperAdmin)");
 
                     b.Property<int?>("SchoolId")
                         .HasColumnType("int");
@@ -615,23 +893,36 @@ namespace SOAP.Web.Migrations
                     b.Property<int?>("SchoolId1")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LockedUntil")
+                        .HasDatabaseName("IX_Users_LockedUntil")
+                        .HasFilter("LockedUntil IS NOT NULL");
+
                     b.HasIndex("PhoneNumber")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasDatabaseName("IX_Users_PhoneNumber");
 
                     b.HasIndex("SchoolId1");
+
+                    b.HasIndex("IsActive", "LastLoginAt")
+                        .HasDatabaseName("IX_Users_Active_LastLogin")
+                        .HasFilter("IsActive = 1");
 
                     b.HasIndex("Role", "IsActive")
                         .HasDatabaseName("IX_Users_Role_Active");
 
                     b.HasIndex("SchoolId", "Role")
-                        .HasDatabaseName("IX_Users_School_Role");
+                        .HasDatabaseName("IX_Users_School_Role")
+                        .HasFilter("SchoolId IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", t =>
+                        {
+                            t.HasComment("User accounts with role-based access control and security monitoring");
+                        });
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.Application", b =>
@@ -654,6 +945,15 @@ namespace SOAP.Web.Migrations
                         .IsRequired();
 
                     b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("SOAP.Web.Models.Entities.LoginAttempt", b =>
+                {
+                    b.HasOne("SOAP.Web.Models.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SOAP.Web.Models.Entities.SchoolStudent", b =>

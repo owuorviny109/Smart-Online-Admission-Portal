@@ -11,6 +11,6 @@ namespace SOAP.Web.Models.DTOs
         public string ContentType { get; set; }
         public string UploadStatus { get; set; }
         public string? AdminFeedback { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
     }
 }

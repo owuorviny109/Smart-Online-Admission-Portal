@@ -27,12 +27,12 @@
                     </div>
                     
                     <div class="mb-3" id="otp-section" style="display: none;">
-                        <label asp-for="OtpCode" class="form-label">
+                        <label asp-for="Otp" class="form-label">
                             <i class="fas fa-key me-1"></i>
                             Verification Code
                         </label>
-                        <input asp-for="OtpCode" class="form-control" placeholder="Enter 6-digit code" maxlength="6" />
-                        <span asp-validation-for="OtpCode" class="text-danger"></span>
+                        <input asp-for="Otp" class="form-control" placeholder="Enter 6-digit code" maxlength="6" />
+                        <span asp-validation-for="Otp" class="text-danger"></span>
                         <div class="form-text">
                             Enter the verification code sent to your phone
                             <a href="#" id="resend-otp" class="text-primary ms-2" style="display: none;">Resend Code</a>
@@ -114,7 +114,7 @@
                             $('#send-otp-btn').hide();
                             $('#login-btn').show();
                             $('#resend-otp').show();
-                            $('#OtpCode').focus();
+                            $('#Otp').focus();
                             otpSent = true;
                             
                             // Start countdown for resend

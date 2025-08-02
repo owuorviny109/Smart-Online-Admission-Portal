@@ -25,6 +25,8 @@ namespace SOAP.Web.Models.Entities
         [StringLength(20)]
         public string PlacementStatus { get; set; } = "Placed";
 
+        public bool HasApplied { get; set; } = false;
+
         public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
         // Navigation properties

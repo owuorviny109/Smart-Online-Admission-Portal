@@ -34,6 +34,8 @@ namespace SOAP.Web.Models.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
         // Navigation properties
         public virtual ICollection<Application> Applications { get; set; } = new List<Application>();
         public virtual ICollection<SchoolStudent> SchoolStudents { get; set; } = new List<SchoolStudent>();
